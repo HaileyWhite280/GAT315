@@ -6,10 +6,12 @@ using UnityEngine.EventSystems;
 public class BodyCreator : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
 {
     [SerializeField] Body bodyPref;
+    [SerializeField] FloatData speed;
+    [SerializeField] FloatData size;
 
 	bool action = false;
 	bool pressed = false;
-	float timer = 0;
+	//float timer = 0;
 
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -29,12 +31,16 @@ public class BodyCreator : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     void Update()
 	{
-        if(action)
+        if(action && (pressed || Input.GetKey(KeyCode.LeftControl)))
         {
+            pressed = false;
+
             Vector3 position = Simulator.Instance.GetScreenToWorldPosition(Input.mousePosition);
 
             Body body = Instantiate(bodyPref, position, Quaternion.identity);
-            body.ApplyForce(Random.insideUnitCircle.normalized);
+
+            body.shape.size = size.value;
+            body.ApplyForce(Random.insideUnitCircle.normalized * speed.value, Body.eForceMode.VELOCITY);
 
             Simulator.Instance.bodies.Add(body);
         }
