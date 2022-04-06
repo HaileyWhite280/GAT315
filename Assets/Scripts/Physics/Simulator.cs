@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class Simulator : Singleton<Simulator>
 {
+	[SerializeField] List<Force> forces;
 	public List<Body> bodies { get; set; } = new List<Body>();
-	public List<Force> forces;
-
 	Camera activeCamera;
 
 	private void Start()
