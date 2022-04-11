@@ -1,0 +1,25 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Spring : MonoBehaviour
+{
+    public Body body1 { get; set; }
+    public Body body2 { get; set; }
+
+    public float restLength { get; set; }
+    public float k { get; set; }
+
+    public void AppyForce()
+    {
+        Vector2 direction = body1.position - body2.position;
+
+        float length = direction.magnitude;
+        float x = length - restLength;
+
+        float f = -k * x;
+
+        body1.ApplyForce(f * direction.normalized, Body.eForceMode.FORCE);
+        body2.ApplyForce(f * direction.normalized, Body.eForceMode.FORCE);
+    }
+}
