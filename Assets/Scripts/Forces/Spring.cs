@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Spring : MonoBehaviour
+public class Spring
 {
     public Body body1 { get; set; }
     public Body body2 { get; set; }
@@ -21,5 +21,7 @@ public class Spring : MonoBehaviour
 
         body1.ApplyForce(f * direction.normalized, Body.eForceMode.FORCE);
         body2.ApplyForce(f * direction.normalized, Body.eForceMode.FORCE);
+
+        Debug.DrawLine(body1.position, body2.position);
     }
 }

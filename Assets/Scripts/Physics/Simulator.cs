@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -47,10 +48,19 @@ public class Simulator : Singleton<Simulator>
 		});
 
 		bodies.ForEach(body => body.acceleration = Vector2.zero);
+    }
 
-/*        foreach(var body in bodies)
+    public Body GetScreenToBody(Vector3 screen)
+    {
+		Body body = null;
+		Ray ray = activeCamera.ScreenPointToRay(screen);
+		RaycastHit2D hit = Physics2D.GetRayIntersection(ray);
+
+		if(hit.collider)
         {
-			Integrator.ExplicitEuler(body, Time.deltaTime);
-        }*/
+			hit.collider.gameObject.TryGetComponent<Body>(out body);
+        }
+
+		return body;
     }
 }
