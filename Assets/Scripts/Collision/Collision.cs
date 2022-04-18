@@ -17,7 +17,7 @@ public class Collision
 
                 if(TestOverlap(bod1, bod2))
                 {
-                    contacts.Add(new Contact() { body1 = bod1, body2 = bod2 });
+                    contacts.Add(genereateContact(bod1, bod2));
                 }
 
             }
@@ -27,5 +27,36 @@ public class Collision
     public static bool TestOverlap(Body bod1, Body bod2)
     {
         return Circle.Intersect(new Circle(bod1), new Circle(bod2));
+    }
+
+    public static Contact genereateContact(Body body1, Body body2)
+    {
+        Contact contact = new Contact();
+
+        contact.body1 = body1;
+        contact.body2 = body2;
+
+        Vector2 direction = body1.position - body2.position;
+        float distance = direction.magnitude;
+        contact.depth = ((CircleShape)body1.shape).radius + ((CircleShape)body2.shape).radius - distance;
+
+        contact.normal = direction.normalized;
+
+        Vector2 position = body2.position + (((CircleShape)body2.shape).radius * contact.normal);
+        Debug.DrawRay(position, contact.normal);
+
+        return contact;
+    }
+
+    public static void SeparateContacts(List<Contact> contacts)
+    {
+        foreach(var contact in contacts)
+        {
+            float totalInverseMass = contact.body1.inverseMass + contact.body2.inverseMass;
+
+            Vector2 separation = contact.normal * (contact.depth / totalInverseMass);
+            contact.body1.position += separation * contact.body1.inverseMass;
+            contact.body2.position -= separation * contact.body2.inverseMass;
+        }
     }
 }

@@ -44,6 +44,8 @@ public class Simulator : Singleton<Simulator>
 			timeAccumulator = timeAccumulator - fixedDeltaTime;
         }
 
+		Collision.SeparateContacts(contacts);
+
 		forces.ForEach(force => force.ApplyForce(bodies));
 
 		bodies.ForEach(body =>
