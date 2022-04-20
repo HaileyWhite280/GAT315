@@ -32,6 +32,8 @@ public class Simulator : Singleton<Simulator>
 
 		timeAccumulator += Time.deltaTime;
 
+		forces.ForEach(force => force.ApplyForce(bodies));
+
 		while(timeAccumulator >= fixedDeltaTime)
         {
 			bodies.ForEach(body => body.shape.color = Color.white);
@@ -39,14 +41,14 @@ public class Simulator : Singleton<Simulator>
 
 			contacts.ForEach(contact => { contact.body1.shape.color = Color.green; contact.body2.shape.color = Color.blue; });
 
+			Collision.SeparateContacts(contacts);
+			Collision.ApplyImpulses(contacts);
+			
 			bodies.ForEach(body => { Integrator.SemiImplicitEuler(body, timeAccumulator); } );
 
-			timeAccumulator = timeAccumulator - fixedDeltaTime;
+			timeAccumulator -= fixedDeltaTime;
         }
 
-		Collision.SeparateContacts(contacts);
-
-		forces.ForEach(force => force.ApplyForce(bodies));
 
 		bodies.ForEach(body =>
 		{

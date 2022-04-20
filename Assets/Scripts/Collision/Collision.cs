@@ -59,4 +59,26 @@ public class Collision
             contact.body2.position -= separation * contact.body2.inverseMass;
         }
     }
+
+    public static void ApplyImpulses(List<Contact> contacts)
+    {
+        foreach (var contact in contacts)
+        {
+            Vector2 relativeVelocity = contact.body1.velocity - contact.body2.velocity;
+            float normalVelocity = Vector2.Dot(relativeVelocity, contact.normal);
+
+            if (normalVelocity > 0) continue;
+
+            float totalInverseMass = contact.body1.inverseMass + contact.body2.inverseMass;
+
+            float restitution = (contact.body1.restitution + contact.body2.restitution) * 0.5f;
+
+            float impulseMagnitude = (restitution * normalVelocity) / totalInverseMass;
+
+            Vector2 impulse = contact.normal * impulseMagnitude;
+
+            contact.body1.ApplyForce(contact.body1.velocity + (impulse * contact.body1.inverseMass), Body.eForceMode.VELOCITY);
+            contact.body2.ApplyForce(contact.body2.velocity - (impulse * contact.body2.inverseMass), Body.eForceMode.VELOCITY);
+        }
+    }
 }

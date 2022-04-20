@@ -30,6 +30,7 @@ public class Body : MonoBehaviour
     //public Vector2 force { get; set; } = Vector2.zero;
 
     public float drag { get; set; } = 0;
+    public float restitution { get; set; } = 0.5f;
     public float mass => shape.mass;
     public float inverseMass { get => (mass == 0 || bodyType != eBodyType.DYNAMIC) ? 0 : 1 / mass; }
     
