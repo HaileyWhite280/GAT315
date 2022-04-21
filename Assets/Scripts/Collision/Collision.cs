@@ -7,7 +7,6 @@ public class Collision
     public static void CreateContacts(List<Body> bodies, out List<Contact> contacts)
     {
         contacts = new List<Contact>();
-
         for(int i = 0; i < bodies.Count - 1; i++)
         {
             for(int j = i + 1; j < bodies.Count; j++)
@@ -38,7 +37,7 @@ public class Collision
 
         Vector2 direction = body1.position - body2.position;
         float distance = direction.magnitude;
-        contact.depth = ((CircleShape)body1.shape).radius + ((CircleShape)body2.shape).radius - distance;
+        contact.depth = (((CircleShape)body1.shape).radius + ((CircleShape)body2.shape).radius) - distance;
 
         contact.normal = direction.normalized;
 
@@ -73,12 +72,12 @@ public class Collision
 
             float restitution = (contact.body1.restitution + contact.body2.restitution) * 0.5f;
 
-            float impulseMagnitude = (restitution * normalVelocity) / totalInverseMass;
+            float impulseMagnitude = ((1 + restitution) * normalVelocity) / totalInverseMass;
 
             Vector2 impulse = contact.normal * impulseMagnitude;
 
-            contact.body1.ApplyForce(contact.body1.velocity + (impulse * contact.body1.inverseMass), Body.eForceMode.VELOCITY);
-            contact.body2.ApplyForce(contact.body2.velocity - (impulse * contact.body2.inverseMass), Body.eForceMode.VELOCITY);
+            contact.body1.ApplyForce(contact.body1.velocity - (impulse * contact.body1.inverseMass), Body.eForceMode.VELOCITY);
+            contact.body2.ApplyForce(contact.body2.velocity + (impulse * contact.body2.inverseMass), Body.eForceMode.VELOCITY);
         }
     }
 }
