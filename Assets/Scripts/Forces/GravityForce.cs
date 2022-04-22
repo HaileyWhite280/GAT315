@@ -8,6 +8,7 @@ public class GravityForce : Force
 
     public override void ApplyForce(List<Body> bodies)
     {
+        //can change Vector2.down if remove -20 from gravity
         bodies.ForEach(body => body.ApplyForce(Vector2.up * gravity.value, Body.eForceMode.ACCELERATION));
     }
 }

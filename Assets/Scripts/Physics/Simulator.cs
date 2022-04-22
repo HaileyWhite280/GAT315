@@ -8,6 +8,7 @@ public class Simulator : Singleton<Simulator>
 	[SerializeField] List<Force> forces;
 	[SerializeField] StringData fps;
 	[SerializeField] IntData fixedFPS;
+	[SerializeField] BoolData simulate;
 
 	public List<Body> bodies { get; set; } = new List<Body>();
 	Camera activeCamera;
@@ -29,6 +30,8 @@ public class Simulator : Singleton<Simulator>
     private void Update()
     {
 		fps.value = (1.0f / Time.deltaTime).ToString("F2");
+
+		if (!simulate.value) return;
 
 		timeAccumulator += Time.deltaTime;
 
@@ -72,5 +75,11 @@ public class Simulator : Singleton<Simulator>
         }
 
 		return body;
+    }
+
+	public void Clear()
+    {
+		bodies.ForEach(body => Destroy(body.gameObject));
+		bodies.Clear();
     }
 }
