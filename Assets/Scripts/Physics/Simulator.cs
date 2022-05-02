@@ -43,22 +43,24 @@ public class Simulator : Singleton<Simulator>
 
 			Collision.CreateContacts(bodies, out var contacts);
 
-			contacts.ForEach(contact => { contact.body1.shape.color = Color.green; contact.body2.shape.color = Color.blue; });
+			//contacts.ForEach(contact => { contact.body1.shape.color = Color.green; contact.body2.shape.color = Color.blue; });
 
 			Collision.SeparateContacts(contacts);
 			Collision.ApplyImpulses(contacts);
 			
-			bodies.ForEach(body => { Integrator.SemiImplicitEuler(body, timeAccumulator); } );
+			bodies.ForEach(body => { 
+				Integrator.SemiImplicitEuler(body, timeAccumulator); 
+				body.position = body.position.Wrap(-GetScreenSize() / 2, GetScreenSize() / 2);
+			} );
 
 			timeAccumulator -= fixedDeltaTime;
         }
 
-
-		bodies.ForEach(body =>
+/*		bodies.ForEach(body =>
 		{
-			body.Step(Time.deltaTime);
+			//body.Step(Time.deltaTime);
 			Integrator.SemiImplicitEuler(body, Time.deltaTime);
-		});
+		});*/
 
 		bodies.ForEach(body => body.acceleration = Vector2.zero);
     }
@@ -75,6 +77,11 @@ public class Simulator : Singleton<Simulator>
         }
 
 		return body;
+    }
+
+	public Vector2 GetScreenSize()
+    {
+		return activeCamera.ViewportToWorldPoint(Vector2.one) * 2;
     }
 
 	public void Clear()
