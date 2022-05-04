@@ -41,8 +41,8 @@ public class Collision
 
         contact.normal = direction.normalized;
 
-        Vector2 position = body2.position + (((CircleShape)body2.shape).radius * contact.normal);
-        Debug.DrawRay(position, contact.normal);
+        //Vector2 position = body2.position + (((CircleShape)body2.shape).radius * contact.normal);
+        //Debug.DrawRay(position, contact.normal);
 
         return contact;
     }

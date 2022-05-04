@@ -51,7 +51,8 @@ public class Simulator : Singleton<Simulator>
 			bodies.ForEach(body => { 
 				Integrator.SemiImplicitEuler(body, timeAccumulator); 
 				body.position = body.position.Wrap(-GetScreenSize() / 2, GetScreenSize() / 2);
-			} );
+				body.shape.GetAABB(body.position).Draw(Color.white);
+			});
 
 			timeAccumulator -= fixedDeltaTime;
         }

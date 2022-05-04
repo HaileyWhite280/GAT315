@@ -9,4 +9,9 @@ public class CircleShape : Shape
     public override float area => radius * radius * Mathf.PI;
 
     public float radius => size / 2;
+
+    public override AABB GetAABB(Vector2 position)
+    {
+        return new AABB(position, Vector2.one * size);
+    }
 }
