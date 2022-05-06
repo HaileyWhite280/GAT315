@@ -1,9 +1,49 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Collision
 {
+    public static void CreateBroadPhaseContacts(BroadPhase broadPhase, List<Body> bodies, List<Contact> contacts)
+    {
+        List<Body> results = new List<Body>();
+        for (int i = 0; i < bodies.Count; i++)
+        {
+            results.Clear();
+            // query the broad-phase for potential contacting bodies
+            broadPhase.Query(bodies[i], results);
+
+            // add broad-phase contacts 
+            for (int j = 0; j < results.Count; j++)
+            {
+                // check if the result is self and that one of the bodies is a dynamic body
+                if (results[j] != bodies[i] &&
+                   (results[j].bodyType == Body.eBodyType.DYNAMIC || bodies[i].bodyType == Body.eBodyType.DYNAMIC))
+                {
+                   // create new contact and add to contacts
+                   Contact contact = new Contact() { body1 = bodies[i], body2 = results[j] };
+                   contacts.Add(contact);
+                    
+                }
+            }
+        }
+
+        //remove dupes in contacts
+        contacts.Distinct(new Contact.ItemEqualityComparer());
+    }
+
+    public static void CreateNarrowPhaseContacts(List<Contact> contacts)
+    {
+        // remove contacts from narrow-phase test
+        contacts.RemoveAll(contact => (TestOverlap(contact.body1, contact.body2) == false));
+        // generate contact info from remaining contacts
+        for (int i = 0; i < contacts.Count; i++)
+        {
+            GenerateContactInfo(contacts[i]);
+        }
+    }
+
     public static void CreateContacts(List<Body> bodies, out List<Contact> contacts)
     {
         contacts = new List<Contact>();
@@ -79,5 +119,19 @@ public class Collision
             contact.body1.ApplyForce(contact.body1.velocity - (impulse * contact.body1.inverseMass), Body.eForceMode.VELOCITY);
             contact.body2.ApplyForce(contact.body2.velocity + (impulse * contact.body2.inverseMass), Body.eForceMode.VELOCITY);
         }
+    }
+
+    public static Contact GenerateContactInfo(Contact contact)
+    {
+        // compute depth
+        Vector2 direction = contact.body1.position - contact.body2.position;
+        float distance = direction.magnitude;
+        float radius = ((CircleShape)contact.body1.shape).radius + ((CircleShape)contact.body2.shape).radius;
+        contact.depth = radius - distance;
+
+        // compute normal
+        contact.normal = direction.normalized;
+
+        return contact;
     }
 }

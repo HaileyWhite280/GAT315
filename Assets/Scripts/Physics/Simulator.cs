@@ -9,6 +9,7 @@ public class Simulator : Singleton<Simulator>
 	[SerializeField] StringData fps;
 	[SerializeField] IntData fixedFPS;
 	[SerializeField] BoolData simulate;
+	[SerializeField] BroadPhase broadPhase;
 
 	public List<Body> bodies { get; set; } = new List<Body>();
 	Camera activeCamera;
@@ -37,13 +38,17 @@ public class Simulator : Singleton<Simulator>
 
 		forces.ForEach(force => force.ApplyForce(bodies));
 
+		Vector2 screenSize = GetScreenSize();
+
 		while(timeAccumulator >= fixedDeltaTime)
         {
-			bodies.ForEach(body => body.shape.color = Color.white);
+			broadPhase.Build(new AABB(Vector2.zero, screenSize), bodies);
 
-			Collision.CreateContacts(bodies, out var contacts);
+			var contacts = new List<Contact>();
+			Collision.CreateBroadPhaseContacts(broadPhase, bodies, contacts);
+			Collision.CreateNarrowPhaseContacts(contacts);
 
-			//contacts.ForEach(contact => { contact.body1.shape.color = Color.green; contact.body2.shape.color = Color.blue; });
+			//Collision.CreateContacts(bodies, out var contacts);
 
 			Collision.SeparateContacts(contacts);
 			Collision.ApplyImpulses(contacts);
@@ -51,11 +56,12 @@ public class Simulator : Singleton<Simulator>
 			bodies.ForEach(body => { 
 				Integrator.SemiImplicitEuler(body, timeAccumulator); 
 				body.position = body.position.Wrap(-GetScreenSize() / 2, GetScreenSize() / 2);
-				body.shape.GetAABB(body.position).Draw(Color.white);
 			});
 
 			timeAccumulator -= fixedDeltaTime;
         }
+
+		broadPhase.Draw();
 
 /*		bodies.ForEach(body =>
 		{

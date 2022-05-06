@@ -8,8 +8,8 @@ public struct AABB
     public Vector2 size { get; set; }
     public Vector2 extents { get => size * 0.5f; }
 
-    public Vector2 min { get => center - extents; }
-    public Vector2 max { get => center + extents; }
+    public Vector2 min { get => center - extents; set => SetMinMax(value, max); }
+    public Vector2 max { get => center + extents; set => SetMinMax(min, value); }
 
     public AABB(Vector2 center, Vector2 size)
     {
