@@ -25,6 +25,11 @@ public class QuadTreeNode
 
     public void Insert(Body body)
     {
+/*        
+        // insert body into the newly subdivided nodes
+        northeast.Insert(body);
+        // insert northwest...*/
+
         if (!nodeAABB.Contains(body.shape.GetAABB(body.position)))
         {
             if(nodeBodies.Count < nodeCapacity)
@@ -33,7 +38,16 @@ public class QuadTreeNode
             }
             else
             {
-                //subdivide
+                if(!subdivided)
+                {
+                    Subdivide();
+                }
+
+                // ???
+                NE.Insert(body);
+                NW.Insert(body);
+                SE.Insert(body);
+                SW.Insert(body);
             }
         }
     }
@@ -53,8 +67,31 @@ public class QuadTreeNode
         }
     }
 
-    //subdivide add nodeLevel + 1 to end after nodeCapacity
-    //draw         Color color = BroadPhase.colors[nodeLevel % BroadPhase.colors.Length];
-/*    nodeAABB.Draw(color);
-        nodeBodies.ForEach(body => Debug.DrawLine(nodeAABB.center, body.position, color));*/
+    public void Draw()
+    {
+        /*        nodeAABB.Draw(Color.green);
+
+                NE.Draw();
+                NW.Draw();
+                SE.Draw();
+                SW.Draw(); ???*/
+
+        Color color = BroadPhase.colors[nodeLevel % BroadPhase.colors.Length];
+
+        nodeAABB.Draw(color);
+        nodeBodies.ForEach(body => Debug.DrawLine(nodeAABB.center, body.position, color));
+    }
+
+    private void Subdivide()
+    {
+        float xo = nodeAABB.extents.x * 0.5f;
+        float yo = nodeAABB.extents.y * 0.5f;
+
+        NE = new QuadTreeNode(new AABB(new Vector2(nodeAABB.center.x - xo, nodeAABB.center.y + yo), nodeAABB.extents), nodeCapacity, nodeLevel + 1);
+        NW = new QuadTreeNode(new AABB(new Vector2(nodeAABB.center.x - xo, nodeAABB.center.y + yo), nodeAABB.extents), nodeCapacity, nodeLevel + 1);
+        SE = new QuadTreeNode(new AABB(new Vector2(nodeAABB.center.x - xo, nodeAABB.center.y + yo), nodeAABB.extents), nodeCapacity, nodeLevel + 1);
+        SW = new QuadTreeNode(new AABB(new Vector2(nodeAABB.center.x - xo, nodeAABB.center.y + yo), nodeAABB.extents), nodeCapacity, nodeLevel + 1);
+
+        subdivided = true;
+    }
 }

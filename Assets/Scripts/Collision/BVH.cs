@@ -2,18 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class QuadTree : BroadPhase
+public class BVH : BroadPhase
 {
-    public int capacity { get; set; } = 4;
-    QuadTreeNode rootNode;
+    BVHNode rootNode;
 
     public override void Build(AABB aabb, List<Body> bodies)
     {
-        // create quadtree root node ??? level
-        rootNode = new QuadTreeNode(aabb, capacity, 2);
+        queryResultCount = 0;
+        List<Body> sorted = new List<Body>(bodies);
 
-        // insert bodies starting at root node
-        bodies.ForEach(body => rootNode.Insert(body));
+        //sort bodies along x axis https://stackoverflow.com/questions/24187287/c-sharp-listt-orderby-float-member
+        sorted.Sort();
+
+        rootNode = new BVHNode(bodies);
     }
 
     public override void Draw()
@@ -24,10 +25,12 @@ public class QuadTree : BroadPhase
     public override void Query(AABB aabb, List<Body> bodies)
     {
         rootNode.Query(aabb, bodies);
+
+        queryResultCount = queryResultCount + bodies.Count;
     }
 
     public override void Query(Body body, List<Body> bodies)
     {
-        //
+        //Query(body.shape.aabb, bodies);
     }
 }

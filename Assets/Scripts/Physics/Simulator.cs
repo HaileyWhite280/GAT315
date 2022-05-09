@@ -9,7 +9,8 @@ public class Simulator : Singleton<Simulator>
 	[SerializeField] StringData fps;
 	[SerializeField] IntData fixedFPS;
 	[SerializeField] BoolData simulate;
-	[SerializeField] BroadPhase broadPhase;
+	
+	BroadPhase broadPhase = new BVH();
 
 	public List<Body> bodies { get; set; } = new List<Body>();
 	Camera activeCamera;
