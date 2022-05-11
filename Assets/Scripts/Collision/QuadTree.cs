@@ -9,6 +9,7 @@ public class QuadTree : BroadPhase
 
     public override void Build(AABB aabb, List<Body> bodies)
     {
+        queryResultCount = 0;
         // create quadtree root node ??? level
         rootNode = new QuadTreeNode(aabb, capacity, 2);
 
@@ -24,6 +25,7 @@ public class QuadTree : BroadPhase
     public override void Query(AABB aabb, List<Body> bodies)
     {
         rootNode.Query(aabb, bodies);
+        queryResultCount += bodies.Count;
     }
 
     public override void Query(Body body, List<Body> bodies)
