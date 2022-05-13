@@ -13,19 +13,19 @@ public class BVHNode
     public BVHNode(List<Body> bodies)
     {
         nodeBodies = bodies;
+
         ComputeBoundary();
         Split();
     }
 
     public void ComputeBoundary()
     {
-        if(nodeBodies.Count > 0)
-        {
-            nodeAABB.center = nodeBodies[0].position;
-            nodeAABB.size = Vector3.zero;
+        if (nodeBodies.Count == 0) return;
 
-            //nodeBodies.ForEach(body => this.nodeAABB.Expand(body.shape.nodeAABB));
-        }
+        nodeAABB.center = nodeBodies[0].position;
+        nodeAABB.size = Vector3.zero;
+
+        nodeBodies.ForEach(body => this.nodeAABB.Expand(body.shape.GetAABB(body.position)));
     }
 
     public void Split()
@@ -36,10 +36,10 @@ public class BVHNode
         if(half >= 1)
         {
             //first half
-            //left = new BVHNode(nodeBodies.GetRange());
+            left = new BVHNode(nodeBodies.GetRange(0, half));
 
             //second half
-            //right = new BVHNode(nodeBodies.GetRange());
+            right = new BVHNode(nodeBodies.GetRange(half, half));
 
             nodeBodies.Clear();
         }
@@ -49,7 +49,10 @@ public class BVHNode
     {
         if (!nodeAABB.Contains(aabb)) return;
 
-        results.AddRange(nodeBodies);
+        if(nodeBodies.Count > 0)
+        {
+            results.AddRange(nodeBodies);
+        }
 
         left?.Query(aabb, results);
         right?.Query(aabb, results);
@@ -60,7 +63,7 @@ public class BVHNode
     {
         nodeAABB.Draw(Color.white);
 
-        left.Draw();
-        right.Draw();
+        left?.Draw();
+        right?.Draw();
     }
 }

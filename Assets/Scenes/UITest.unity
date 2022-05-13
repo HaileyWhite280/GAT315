@@ -2144,6 +2144,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1609411991}
     m_Modifications:
+    - target: {fileID: 2195664555835148740, guid: 30c1acc5d2258694db3ad6e7c041a6f1, type: 3}
+      propertyPath: data
+      value: 
+      objectReference: {fileID: 11400000, guid: 42af9b613a4ffcf4db9ea7eac6880c8e, type: 2}
     - target: {fileID: 7999692196880295496, guid: 30c1acc5d2258694db3ad6e7c041a6f1, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2230,7 +2234,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9110661875155055257, guid: 30c1acc5d2258694db3ad6e7c041a6f1, type: 3}
       propertyPath: m_Name
-      value: Text
+      value: Collision
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30c1acc5d2258694db3ad6e7c041a6f1, type: 3}
@@ -3291,7 +3295,8 @@ MonoBehaviour:
   fps: {fileID: 11400000, guid: 7d759b92c9a33f946964d995b987c4f6, type: 2}
   fixedFPS: {fileID: 11400000, guid: 2964ac4230fdb64429c5d0a40278d925, type: 2}
   simulate: {fileID: 11400000, guid: d314522d22b5eba45959296e6e4dce43, type: 2}
-  collisionInfo: {fileID: 0}
+  collisionInfo: {fileID: 11400000, guid: 42af9b613a4ffcf4db9ea7eac6880c8e, type: 2}
+  broadPhaseType: {fileID: 11400000, guid: c6c3e4e99c45185499638b796c7742b3, type: 2}
 --- !u!4 &1787259371
 Transform:
   m_ObjectHideFlags: 0

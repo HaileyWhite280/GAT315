@@ -10,7 +10,7 @@ public class Simulator : Singleton<Simulator>
 	[SerializeField] IntData fixedFPS;
 	[SerializeField] BoolData simulate;
 	[SerializeField] StringData collisionInfo;
-	//[SerializeField] List<Force> force;
+	[SerializeField] EnumData broadPhaseType;
 	
 	BroadPhase broadPhase = new BVH();
 
@@ -20,8 +20,7 @@ public class Simulator : Singleton<Simulator>
 	private float timeAccumulator = 0;
 	public float fixedDeltaTime => 1.0f / fixedFPS.value;
 
-/*	BroadPhase[] broadPhases { new QuadTree(), new BVH(), new NullBroadPhase() };
-	BroadPhase broadphase;*/
+    BroadPhase[] broadPhases = { new QuadTree(), new BVH(), new NullBroadPhase() };
 
 	private void Start()
 	{
@@ -46,9 +45,9 @@ public class Simulator : Singleton<Simulator>
 
 		Vector2 screenSize = GetScreenSize();
 
-		/*broadPhase = broadPhases[broadPhaseType.value];*/
+        broadPhase = broadPhases[broadPhaseType.value];
 
-		while(timeAccumulator >= fixedDeltaTime)
+        while (timeAccumulator >= fixedDeltaTime)
         {
 			broadPhase.Build(new AABB(Vector2.zero, screenSize), bodies);
 

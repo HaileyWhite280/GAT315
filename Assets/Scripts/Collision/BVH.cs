@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BVH : BroadPhase
@@ -9,12 +10,10 @@ public class BVH : BroadPhase
     public override void Build(AABB aabb, List<Body> bodies)
     {
         queryResultCount = 0;
-        List<Body> sorted = new List<Body>(bodies);
 
-        //sort bodies along x axis https://stackoverflow.com/questions/24187287/c-sharp-listt-orderby-float-member
-        sorted.Sort();
+        List<Body> sorted = bodies.OrderBy(body => (body.position.x)).ToList();
 
-        rootNode = new BVHNode(bodies);
+        rootNode = new BVHNode(sorted);
     }
 
     public override void Draw()
@@ -31,6 +30,6 @@ public class BVH : BroadPhase
 
     public override void Query(Body body, List<Body> bodies)
     {
-        //Query(body.shape.aabb, bodies);
+        Query(body.shape.GetAABB(body.position), bodies);
     }
 }
