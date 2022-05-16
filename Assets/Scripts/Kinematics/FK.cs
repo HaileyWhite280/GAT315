@@ -20,7 +20,7 @@ public class FK : MonoBehaviour
         {
             // create segment
             var segment = Instantiate(segmentPrefab, transform);
-            segment.Initialize(parent, transform.position, 0, length, size);
+            segment.Initialize(parent, transform.position, transform.rotation.eulerAngles.z, length, size);
 
             // add segment
             segments.Add(segment);
