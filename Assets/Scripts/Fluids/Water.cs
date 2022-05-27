@@ -19,6 +19,7 @@ public class Water : MonoBehaviour
 	[Header("Waves")]
 	[SerializeField] Wave waveA;
 	[SerializeField] Wave waveB;
+	[SerializeField] Wave waveC;
 
 	[Header("Mesh Generator")]
 	[SerializeField] [Range(1.0f, 80.0f)] float xMeshSize = 40.0f;
@@ -64,8 +65,8 @@ public class Water : MonoBehaviour
         {
 
             frame++;
-            UpdateSimulation(previousBuffer, currentBuffer, timeStep);
-            //UpdateWave(currentBuffer);
+            //UpdateSimulation(previousBuffer, currentBuffer, timeStep);
+            UpdateWave(currentBuffer);
 
             time -= timeStep;
         }
