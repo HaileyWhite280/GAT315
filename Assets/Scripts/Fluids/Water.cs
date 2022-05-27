@@ -8,11 +8,10 @@ public class Water : MonoBehaviour
 	[System.Serializable]
 	struct Wave
     {
-		[Range(0.0f, 10.0f)] public float amplitude;
-		[Range(0.0f, 10.0f)] public float length;
-		[Range(0.0f, 10.0f)] public float rate;
-
-	}
+        [Range(0.0f, 10.0f)] public float amplitude;
+        [Range(0.0f, 10.0f)] public float length;
+        [Range(0.0f, 10.0f)] public float rate;
+    }
 
 	[SerializeField] [Range(1.0f, 90.0f)] float fps = 30;
 	[SerializeField] [Range(0.0f, 1.0f)] float damping = 0.04f;
@@ -60,15 +59,16 @@ public class Water : MonoBehaviour
 
 	void Update()
 	{
-		time += Time.deltaTime;
-		while (time > timeStep)
-		{
-			frame++;
-			UpdateSimulation(previousBuffer, currentBuffer, timeStep);
-			//UpdateWave(currentBuffer);
+        time += Time.deltaTime;
+        while (time > timeStep)
+        {
 
-			time -= timeStep;
-		}
+            frame++;
+            UpdateSimulation(previousBuffer, currentBuffer, timeStep);
+            //UpdateWave(currentBuffer);
+
+            time -= timeStep;
+        }
 
 		// set vertices height from current buffer
 		for (int x = 0; x < xMeshVertexNum; x++)
@@ -93,13 +93,13 @@ public class Water : MonoBehaviour
 		{
 			for (int z = 0; z < zMeshVertexNum; z++)
 			{
-				float tA = (z) * waveA.length;
-				float vA = Mathf.Sin(tA + (Time.time * waveA.rate)) * waveA.amplitude;
+                float tA = (z) * waveA.length;
+                float vA = Mathf.Sin(tA + (Time.time * waveA.rate)) * waveA.amplitude;
 
-				float tB = (x) * waveB.length;
-				float vB = Mathf.Sin(tB + (Time.time * waveB.rate)) * waveB.amplitude;
+                float tB = (x + z) * waveB.length;
+                float vB = Mathf.Sin(tB + (Time.time * waveB.rate)) * waveB.amplitude;
 
-				buffer[x, z] = vA + vB;
+                buffer[x, z] = vA + vB;
 			}
 		}
 	}
@@ -110,7 +110,24 @@ public class Water : MonoBehaviour
 		{
 			for (int z = 1; z < zMeshVertexNum-1; z++)
 			{
-				current[x, z] = previous[x, z];
+                //update buffer value
+                //float value = previous[x, z]; //accumulate 4 neighbors
+                float left = x - 1 < 0 ? previous[x, z] : previous[x - 1, z];
+                float right = x == xMeshVertexNum - 1 ? previous[x, z] : previous[x + 1, z];
+                float bottom = z - 1 < 0 ? previous[x, z] : previous[x, z - 1];
+                float top = z == zMeshVertexNum - 1 ? previous[x, z] : previous[x, z + 1];
+                float value = left + right + top + bottom;
+
+                //half of neighbors
+                value = value / 2;
+
+				//subtract current value from value
+				value = value - current[x, z];
+
+				//dampen value
+				value = value * Mathf.Pow(damping, dt);
+
+				current[x, z] = value;
 			}
 		}
 	}
@@ -125,14 +142,18 @@ public class Water : MonoBehaviour
 			{
 				// get hit triangle
 				int[] triangles = mesh.triangles;
+
 				// get triangle index hit
 				int index = triangles[raycastHit.triangleIndex * 3];
+
 				// get x and z vertex
 				int x = index % xMeshVertexNum;
 				int z = index / xMeshVertexNum;
 
 				if (x > 1 && x < xMeshVertexNum - 1 && z > 1 && z < zMeshVertexNum - 1)
 				{
+
+
 					currentBuffer[x, z] = offset;
 				}
 			}
